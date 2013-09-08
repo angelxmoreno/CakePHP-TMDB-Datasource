@@ -1,4 +1,5 @@
 <?php
+
 /**
  * TMDB Datasource - A CakePHP datasource for the TMDB (themoviedb.org) V3 API
  *
@@ -43,17 +44,139 @@ class TmdbSource extends DataSource {
 	 * @var array
 	 */
 	protected $_structure = array(
-	    //@todo add extended methods that can be called
-	    'movies' => array('searchable' => true, 'id' => 550, 'listable' => false),
-	    'collections' => array('searchable' => true, 'id' => null, 'listable' => false),
-	    'people' => array('searchable' => true, 'id' => 287, 'listable' => false),
-	    'lists' => array('searchable' => true, 'id' => 74643, 'listable' => false),
-	    'companies' => array('searchable' => true, 'id' => 1, 'listable' => false),
-	    'genres' => array('searchable' => false, 'id' => null, 'listable' => true),
-	    'keywords' => array('searchable' => true, 'id' => 1721, 'listable' => false),
-	    //@todo jobs can only be festch as a list with no ids. Make sure to compensate.
-	    'jobs' => array('searchable' => false, 'id' => null, 'listable' => true),
-	    'reviews' => array('searchable' => false, 'id' => 49026, 'listable' => false)
+	    //@todo jobs & genres can only be festch as a list with no ids. Make sure to compensate.
+	    'genres' => array('searchable' => false, 'id' => 16, 'listable' => true,
+		'schema' => array(
+		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    )),
+	    //'jobs' => array('searchable' => false, 'id' => null, 'listable' => true),
+	    'movies' => array('searchable' => true, 'id' => 550, 'listable' => false,
+		'schema' => array(
+		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		    'adult' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'key' => 'index'),
+		    'backdrop_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'budget' => array('type' => 'float', 'null' => true, 'default' => NULL, 'length' => '13,2'),
+		    'homepage' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'imdb_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'original_title' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'overview' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'popularity' => array('type' => 'float', 'null' => true, 'default' => NULL, 'length' => '16,13'),
+		    'poster_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'release_date' => array('type' => 'date', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		    'revenue' => array('type' => 'float', 'null' => true, 'default' => NULL, 'length' => '13,2'),
+		    'runtime' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 3),
+		    'status' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'tagline' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'title' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'vote_average' => array('type' => 'float', 'null' => true, 'default' => NULL, 'length' => '6,3'),
+		    'vote_count' => array('type' => 'integer', 'null' => true, 'default' => NULL),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'adult' => array('column' => 'adult', 'unique' => 0),
+			'imdbid' => array('column' => 'imdb_id', 'unique' => 0),
+			'release_date' => array('column' => 'release_date', 'unique' => 0),
+			'status' => array('column' => 'status', 'unique' => 0),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    )),
+	    'collections' => array('searchable' => true, 'id' => 10, 'listable' => false,
+		'schema' => array(
+		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'overview' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'poster_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'backdrop_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    )),
+	    'people' => array('searchable' => true, 'id' => 287, 'listable' => false,
+		'schema' => array(
+		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		    'adult' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'key' => 'index'),
+		    'biography' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'birthday' => array('type' => 'date', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		    'deathday' => array('type' => 'date', 'null' => true, 'default' => NULL, 'key' => 'index'),
+		    'homepage' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'imdb_id' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'place_of_birth' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'popularity' => array('type' => 'float', 'null' => true, 'default' => NULL, 'length' => '16,3'),
+		    'profile_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'adult' => array('column' => 'adult', 'unique' => 0),
+			'birthday' => array('column' => 'birthday', 'unique' => 0),
+			'deathday' => array('column' => 'deathday', 'unique' => 0),
+			'imdbid' => array('column' => 'imdb_id', 'unique' => 0),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    )),
+	    'lists' => array('searchable' => true, 'id' => '509ec17b19c2950a0600050d', 'listable' => false,
+		'schema' => array(
+		    'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 40, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'created_by' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'description' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'favorite_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		    'item_count' => array('type' => 'integer', 'null' => false, 'default' => '0'),
+		    'iso_639_1' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'poster_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'created_by' => array('column' => 'created_by', 'unique' => 0),
+			'iso_639_1' => array('column' => 'iso_639_1', 'unique' => 0),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    )),
+	    'companies' => array('searchable' => true, 'id' => 1, 'listable' => false,
+		'schema' => array(
+		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		    'description' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'headquarters' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'homepage' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'logo_path' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'parent_company_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'parent_company_id' => array('column' => 'parent_company_id', 'unique' => 0),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    )),
+	    'keywords' => array('searchable' => true, 'id' => 1721, 'listable' => false,
+		'schema' => array(
+		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    )),
+	    'reviews' => array('searchable' => false, 'id' => '5013bc76760ee372cb00253e', 'listable' => false,
+		'schema' => array(
+		    'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 40, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'author' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'content' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'iso_639_1' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'media_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		    'media_title' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'media_type' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		    'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'iso_639_1' => array('column' => 'iso_639_1', 'unique' => 0),
+			'media_type' => array('column' => 'media_type', 'unique' => 0),
+			'media_id' => array('column' => 'media_id', 'unique' => 0),
+		    ),
+		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+	    ))
 	);
 
 	/**
@@ -94,6 +217,7 @@ class TmdbSource extends DataSource {
 	/**
 	 * The system wide configuration information
 	 *
+	 * @var array
 	 */
 	protected $_tmdbConfig = array();
 
@@ -120,8 +244,6 @@ class TmdbSource extends DataSource {
 	 * Create our HttpSocket and handle any config tweaks.
 	 */
 	public function __construct($config) {
-		parent::__construct($config);
-		$this->_http = new HttpSocket();
 		foreach ($this->_structure as $sourceName => $sourceMeta) {
 			//build the $_sources array
 			$this->_sources[] = $sourceName;
@@ -135,48 +257,28 @@ class TmdbSource extends DataSource {
 			if ($sourceMeta['listable']) {
 				$this->_listable[] = $sourceName;
 			}
+
+			//build the $_descriptions array (schema)
+			if ($sourceMeta['schema']) {
+				$this->_descriptions[$sourceName] = $sourceMeta['schema'];
+			}
+		}
+		parent::__construct($config);
+		$this->_http = new HttpSocket();
+		if (!$this->config['apiKey']) {
+			throw new MissingDatasourceConfigException(array('config' => 'apiKey'));
 		}
 		$this->fetchConfiguration();
-		debug($this->_tmdbConfig);
 	}
 
 	/**
-	 * Cache the DataSource description
+	 * Caches/returns cached results for child instances
 	 *
-	 * @param string $tableName The name of the object (model) to cache
-	 * @param mixed $schema The description of the model, usually a string or array
-	 * @return mixed
+	 * @param mixed $data
+	 * @return array Array of sources available in this datasource.
 	 */
-	protected function _cacheDescription($tableName, $schema = null) {
-		if ($this->cacheSources === false) {
-			return null;
-		}
-
-		if ($schema !== null) {
-			return $this->_descriptions[$object] = & $schema;
-		}
-		$cacheKey = ConnectionManager::getSourceName($this) . '_' . $tableName . '_schema';
-		$schema = Cache::read($cacheKey, '_cake_model_');
-		if (!$schema) {
-			$result = $this->_lookup($tableName, array('conditions' => array('id' => $this->_structure[$tableName]['id'])));
-			$schema = array();
-			foreach ($result as $key => $val) {
-				if (!is_array($val)) {
-					$schema[$key] = array(
-					    'type' => gettype($val),
-					    'null' => true,
-					    'key' => null,
-					    'length' => null,
-					    'default' => null,
-					    'key' => null,
-					    'collate' => 'utf8_general_ci',
-					    'charset' => 'utf8'
-					);
-				}
-			}
-			Cache::write($cacheKey, $schema, '_cake_model_');
-		}
-		return $schema;
+	public function listSources($data = null) {
+		return $this->_sources;
 	}
 
 	public function fullTableName($model) {
@@ -187,6 +289,26 @@ class TmdbSource extends DataSource {
 			return $model;
 		}
 		throw new CakeException(__d('tmdb_api', 'Unable to get table name.'));
+	}
+
+	/**
+	 * Get the system wide configuration information
+	 * This method currently holds the data relevant to building image URLs as well as the change key map.
+	 *
+	 * @link http://docs.themoviedb.apiary.io/#get-%2F3%2Fconfiguration
+	 * @return TMDb result array
+	 */
+	public function fetchConfiguration() {
+		if (!$this->_tmdbConfig) {
+			$cacheKey = ConnectionManager::getSourceName($this) . 'tmdbConfiguration';
+			$config = Cache::read($cacheKey, '_cake_model_');
+			if (!$config) {
+				$config = $this->_request('configuration');
+				Cache::write($cacheKey, $config, '_cake_model_');
+			}
+			$this->_tmdbConfig = $config;
+		}
+		return $this->_tmdbConfig;
 	}
 
 	/**
@@ -217,15 +339,15 @@ class TmdbSource extends DataSource {
 		}
 		// check if the conditions in $queryData supply at least one of the required keys
 		$queryData['conditions'] = (array) $queryData['conditions'];
-		if(isset($queryData['conditions'][$model->alias.'.id'])){
-			$queryData['conditions']['id'] = $queryData['conditions'][$model->alias.'.id'];
-			unset($queryData['conditions'][$model->alias.'.id']);
+		if (isset($queryData['conditions'][$model->alias . '.id'])) {
+			$queryData['conditions']['id'] = $queryData['conditions'][$model->alias . '.id'];
+			unset($queryData['conditions'][$model->alias . '.id']);
 		}
 		$this->_checkConditionsKeys($model, $queryData['conditions']);
 
 		//if id is supplied, perform a lookup
 		if (array_key_exists('id', $queryData['conditions'])) {
-			$lookupResults = $this->_lookup($model, $queryData, $recursive);
+			$lookupResults = $this->lookup($model, $queryData, $recursive);
 			$results = array($lookupResults);
 		} elseif (array_key_exists('query', $queryData['conditions'])) {
 			$searchResults = $this->_search($model, $queryData, $recursive);
@@ -241,11 +363,44 @@ class TmdbSource extends DataSource {
 		return $_results;
 	}
 
-	protected function _lookup($model, $queryData, $recursive = null) {
-		//we assume $queryData['conditions']['id'] exists
-		$tableName = $this->fullTableName($model);
-		$path = Inflector::singularize($tableName) . '/' . $queryData['conditions']['id'];
-		return $this->_request($path);
+	public function lookup($source, $id, $recursive = null) {
+		if (is_array($id)) {
+			$id = $id['conditions']['id'];
+		}
+		$tableName = $this->fullTableName($source);
+		if ($this->isListable($tableName)) {
+			return $this->_listableLookup($tableName, $id, $recursive);
+		} else {
+			$path = Inflector::singularize($tableName) . '/' . $id;
+			return $this->_request($path);
+		}
+	}
+
+	protected function _listableLookup($tableName, $id, $recursive) {
+		$list = $this->_buildListable($tableName);
+		return array_key_exists($id, $list) ? $list[$id] : false;
+	}
+
+	protected function _buildListable($tableName) {
+		$cacheKey = ConnectionManager::getSourceName($this) . '_listable_' . $tableName;
+		$list = Cache::read($cacheKey, '_cake_model_');
+		if (!$list) {
+			$path = Inflector::singularize($tableName) . '/' . 'list';
+			$rawList = $this->_request($path);
+			foreach ($rawList[$tableName] as $row) {
+				$list[$row['id']] = $row;
+			}
+			Cache::write($cacheKey, $list, '_cake_model_');
+		}
+		return $list;
+	}
+
+	public function isListable($tableName) {
+		return in_array($tableName, $this->_listable);
+	}
+
+	public function isSearchable($source) {
+		return in_array($source, $this->_searchable);
 	}
 
 	protected function _search($model, $queryData = array(), $recursive = null) {
@@ -298,12 +453,8 @@ class TmdbSource extends DataSource {
 		$this->_requestLogs[] = array_combine(array('method', 'path', 'params'), func_get_args());
 	}
 
-	protected function _isSearchable($source) {
-		return in_array($source, $this->_searchable);
-	}
-
 	protected function _checkConditionsKeys(Model $model, array $conditions) {
-		if (!$this->_isSearchable($model->useTable) && !array_key_exists('id', $conditions)) {
+		if (!$this->isSearchable($model->useTable) && !array_key_exists('id', $conditions)) {
 			throw new CakeException(__d(
 				'tmdb_api', 'Missing required conditions key for %s (%s). You can only search this model by id', $model->name, $model->useTable
 			));
@@ -316,26 +467,6 @@ class TmdbSource extends DataSource {
 		}
 	}
 
-	/**
-	 * Get the system wide configuration information
-	 * This method currently holds the data relevant to building image URLs as well as the change key map.
-	 *
-	 * @link http://docs.themoviedb.apiary.io/#get-%2F3%2Fconfiguration
-	 * @return TMDb result array
-	 */
-	public function fetchConfiguration() {
-		if(!$this->_tmdbConfig){
-			$cacheKey = ConnectionManager::getSourceName($this) . 'tmdbConfiguration';
-			$config = Cache::read($cacheKey, '_cake_model_');
-			if (!$config) {
-				$config = $this->query($this->_baseUrl . 'configuration', array('api_key' => $this->config['apiKey']), 'get');
-				Cache::write($cacheKey, $config, '_cake_model_');
-			}
-			$this->_tmdbConfig = $config;
-		}
-		return $this->_tmdbConfig;
-	}
-
 	public function query($url, $params = array(), $method = 'get') {
 		$responseObject = $this->_http->$method($url, $params, $this->_httpRequest);
 		$responseBodyJson = $responseObject->body;
@@ -346,4 +477,5 @@ class TmdbSource extends DataSource {
 		}
 		return $responseBodyArray;
 	}
+
 }
