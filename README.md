@@ -61,12 +61,14 @@ $results = $this->TmdbMovie->read(null, 550);
 debug($results);
 
 $results = $this->TmdbMovie->find('first', array('conditions'=>array(
-	'query'=>'Terminator'
+	'query'=>'Terminator',
+	'append_to_response' => array('images'),
 )));
 debug($results);
 
 $results = $this->TmdbMovie->find('all', array('conditions'=>array(
-	'query'=>'Batman'
+	'query'=>'Batman',
+	'append_to_response' => true,//will auto append all applicable calls
 )));
 debug($results);
 ```

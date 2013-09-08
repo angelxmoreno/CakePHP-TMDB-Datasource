@@ -46,6 +46,7 @@ class TmdbSource extends DataSource {
 	protected $_structure = array(
 	    //@todo jobs & genres can only be festch as a list with no ids. Make sure to compensate.
 	    'genres' => array('searchable' => false, 'id' => 16, 'listable' => true,
+		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -56,6 +57,19 @@ class TmdbSource extends DataSource {
 	    )),
 	    //'jobs' => array('searchable' => false, 'id' => null, 'listable' => true),
 	    'movies' => array('searchable' => true, 'id' => 550, 'listable' => false,
+		'extraCalls' => array(
+		    'alternative_titles',
+		    'images',
+		    'casts',
+		    'keywords',
+		    'releases',
+		    'trailers',
+		    'translations',
+		    'similar_movies',
+		    'reviews',
+		    'lists',
+		    'changes',
+		),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		    'adult' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'key' => 'index'),
@@ -85,6 +99,9 @@ class TmdbSource extends DataSource {
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
 	    'collections' => array('searchable' => true, 'id' => 10, 'listable' => false,
+		'extraCalls' => array(
+		    'images',
+		),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -97,6 +114,11 @@ class TmdbSource extends DataSource {
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
 	    'people' => array('searchable' => true, 'id' => 287, 'listable' => false,
+		'extraCalls' => array(
+		    'credits',
+		    'images',
+		    'changes',
+		),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		    'adult' => array('type' => 'boolean', 'null' => false, 'default' => '1', 'key' => 'index'),
@@ -119,6 +141,7 @@ class TmdbSource extends DataSource {
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
 	    'lists' => array('searchable' => true, 'id' => '509ec17b19c2950a0600050d', 'listable' => false,
+		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 40, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		    'created_by' => array('type' => 'string', 'null' => true, 'default' => NULL, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -136,6 +159,9 @@ class TmdbSource extends DataSource {
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
 	    'companies' => array('searchable' => true, 'id' => 1, 'listable' => false,
+		'extraCalls' => array(
+		    'movies',
+		),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		    'description' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -151,6 +177,7 @@ class TmdbSource extends DataSource {
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
 	    'keywords' => array('searchable' => true, 'id' => 1721, 'listable' => false,
+		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		    'name' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -160,6 +187,7 @@ class TmdbSource extends DataSource {
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
 	    'reviews' => array('searchable' => false, 'id' => '5013bc76760ee372cb00253e', 'listable' => false,
+		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 40, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		    'author' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -364,19 +392,26 @@ class TmdbSource extends DataSource {
 	}
 
 	public function lookup($source, $id, $recursive = null) {
-		if (is_array($id)) {
-			$id = $id['conditions']['id'];
-		}
+		$params = array();
 		$tableName = $this->fullTableName($source);
+		if (is_array($id)) {
+			$conditions = $id['conditions'];
+			$id = $conditions['id'];
+			if (isset($conditions['append_to_response']) && is_array($conditions['append_to_response'])) {
+				$params['append_to_response'] = implode(',', $conditions['append_to_response']);
+			} elseif (isset($conditions['append_to_response']) && $conditions['append_to_response'] === true) {
+				$params['append_to_response'] = implode(',', $this->_structure[$tableName]['extraCalls']);
+			}
+		}
 		if ($this->isListable($tableName)) {
-			return $this->_listableLookup($tableName, $id, $recursive);
+			return $this->_listableLookup($tableName, $id);
 		} else {
 			$path = Inflector::singularize($tableName) . '/' . $id;
-			return $this->_request($path);
+			return $this->_request($path, $params);
 		}
 	}
 
-	protected function _listableLookup($tableName, $id, $recursive) {
+	protected function _listableLookup($tableName, $id) {
 		$list = $this->_buildListable($tableName);
 		return array_key_exists($id, $list) ? $list[$id] : false;
 	}
