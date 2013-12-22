@@ -385,6 +385,7 @@ class TmdbSource extends DataSource {
 				'tmdb_api', 'Unkown search algorithm for %s (%s). Please use one of the following in your conditions: %s', $model->name, $model->useTable
 			));
 		}
+		$_results = array();
 		foreach ($results as $result) {
 			$_results[] = array($model->alias => $result);
 		}
