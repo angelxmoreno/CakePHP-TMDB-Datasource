@@ -1,0 +1,20 @@
+{
+    "name": "angelxmoreno/cakephp-tmdb-datasource",
+    "type": "cakephp-plugin",
+    "description": "A CakePHP plugin for connecting to the TMDB API using a Datasource",
+    "keywords": ["cakephp","datasource","api","movie","api"],
+    "homepage": "https://github.com/angelxmoreno/CakePHP-TMDB-Datasource",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Angel S. Moreno",
+            "homepage": "http://phpmine.com"
+        }
+    ],
+    "require": {
+        "composer/installers": "*"
+    },
+    "extra": {
+        "installer-name": "TmdbApi"
+    }
+}
