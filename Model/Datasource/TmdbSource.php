@@ -45,7 +45,7 @@ class TmdbSource extends DataSource {
 	 */
 	protected $_structure = array(
 	    //@todo jobs & genres can only be festch as a list with no ids. Make sure to compensate.
-	    'genres' => array('searchable' => false, 'id' => 16, 'listable' => true,
+	    'genres' => array('searchable' => false, 'id' => 16, 'listable' => true, 'findable' => false,
 		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
@@ -56,7 +56,14 @@ class TmdbSource extends DataSource {
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
 	    //'jobs' => array('searchable' => false, 'id' => null, 'listable' => true),
-	    'movies' => array('searchable' => true, 'id' => 550, 'listable' => false,
+	    'movies' => array('searchable' => true, 'id' => 550, 'listable' => false, 'findable' => true,
+                'finds' => array(
+                    'latest',
+                    'upcoming',
+                    'now_playing',
+                    'popular',
+                    'top_rated',
+                    ),
 		'extraCalls' => array(
 		    'alternative_titles',
 		    'images',
@@ -98,7 +105,7 @@ class TmdbSource extends DataSource {
 		    ),
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
-	    'collections' => array('searchable' => true, 'id' => 10, 'listable' => false,
+	    'collections' => array('searchable' => true, 'id' => 10, 'listable' => false, 'findable' => false,
 		'extraCalls' => array(
 		    'images',
 		),
@@ -113,7 +120,7 @@ class TmdbSource extends DataSource {
 		    ),
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
-	    'people' => array('searchable' => true, 'id' => 287, 'listable' => false,
+	    'people' => array('searchable' => true, 'id' => 287, 'listable' => false, 'findable' => false,
 		'extraCalls' => array(
 		    'credits',
 		    'images',
@@ -140,7 +147,7 @@ class TmdbSource extends DataSource {
 		    ),
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
-	    'lists' => array('searchable' => true, 'id' => '509ec17b19c2950a0600050d', 'listable' => false,
+	    'lists' => array('searchable' => true, 'id' => '509ec17b19c2950a0600050d', 'listable' => false, 'findable' => false,
 		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 40, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -158,7 +165,7 @@ class TmdbSource extends DataSource {
 		    ),
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
-	    'companies' => array('searchable' => true, 'id' => 1, 'listable' => false,
+	    'companies' => array('searchable' => true, 'id' => 1, 'listable' => false, 'findable' => false,
 		'extraCalls' => array(
 		    'movies',
 		),
@@ -176,7 +183,7 @@ class TmdbSource extends DataSource {
 		    ),
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
-	    'keywords' => array('searchable' => true, 'id' => 1721, 'listable' => false,
+	    'keywords' => array('searchable' => true, 'id' => 1721, 'listable' => false, 'findable' => false,
 		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
@@ -186,7 +193,7 @@ class TmdbSource extends DataSource {
 		    ),
 		    'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 	    )),
-	    'reviews' => array('searchable' => false, 'id' => '5013bc76760ee372cb00253e', 'listable' => false,
+	    'reviews' => array('searchable' => false, 'id' => '5013bc76760ee372cb00253e', 'listable' => false, 'findable' => false,
 		'extraCalls' => array(),
 		'schema' => array(
 		    'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 40, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -215,11 +222,18 @@ class TmdbSource extends DataSource {
 	protected $_sources = array();
 
 	/**
-	 * Holds a list of sources (tables) that aresearchable by passing query in conditions
+	 * Holds a list of sources (tables) that are searchable by passing query in conditions
 	 *
 	 * @var array
 	 */
 	protected $_searchable = array();
+        
+        /**
+	 * Holds a list of sources (tables) that use the endpoints {model}/{endpoint}
+	 *
+	 * @var array
+	 */
+	protected $_findable = array();
 
 	/**
 	 * Holds references to descriptions loaded by the DataSource
@@ -279,6 +293,11 @@ class TmdbSource extends DataSource {
 			//build the $_searchable array
 			if ($sourceMeta['searchable']) {
 				$this->_searchable[] = $sourceName;
+			}
+                        
+                        //build the $_findable array
+			if ($sourceMeta['findable']) {
+				$this->_findable[] = $sourceName;
 			}
 
 			//build the $_listable array
@@ -377,10 +396,21 @@ class TmdbSource extends DataSource {
 		if (array_key_exists('id', $queryData['conditions'])) {
 			$lookupResults = $this->lookup($model, $queryData, $recursive);
 			$results = array($lookupResults);
-		} elseif (array_key_exists('query', $queryData['conditions'])) {
+		}
+                
+                //if conditions['query'] is supplied, perform a search
+                elseif (array_key_exists('query', $queryData['conditions'])) {
 			$searchResults = $this->_search($model, $queryData, $recursive);
 			$results = $searchResults['results'];
-		} else {
+		} 
+                
+                //if conditions['find'] is supplied, then fetch {tab;e}/{find}
+                elseif (array_key_exists('find', $queryData['conditions'])) {
+			$searchResults = $this->_find($model, $queryData, $recursive);
+			$results = $searchResults['results'];
+		}
+                
+                else {
 			throw new CakeException(__d(
 				'tmdb_api', 'Unkown search algorithm for %s (%s). Please use one of the following in your conditions: %s', $model->name, $model->useTable
 			));
@@ -437,6 +467,10 @@ class TmdbSource extends DataSource {
 	public function isSearchable($source) {
 		return in_array($source, $this->_searchable);
 	}
+        
+        public function isFindable($source) {
+		return in_array($source, $this->_findable);
+	}
 
 	protected function _search($model, $queryData = array(), $recursive = null) {
 		//we assume $queryData['conditions']['query'] exists
@@ -446,6 +480,16 @@ class TmdbSource extends DataSource {
 		    'query' => $queryData['conditions']['query'],
 		);
 		return $this->_request($path, $params);
+	}
+        
+        protected function _find($model, $queryData = array(), $recursive = null) {
+		//we assume $queryData['conditions']['query'] exists
+		$path = Inflector::singularize($this->fullTableName($model)) . '/' . $queryData['conditions']['find'];
+		$results = $this->_request($path);
+                if(!array_key_exists('results', $results)){
+                    return array('results' => array($results));
+                }
+                return $results;
 	}
 
 	/**
@@ -489,20 +533,36 @@ class TmdbSource extends DataSource {
 	}
 
 	protected function _checkConditionsKeys(Model $model, array $conditions) {
-		if (!$this->isSearchable($model->useTable) && !array_key_exists('id', $conditions)) {
+		if (!$this->isSearchable($model->useTable) && !array_key_exists('id', $conditions) && !array_key_exists('find', $conditions)) {
 			throw new CakeException(__d(
 				'tmdb_api', 'Missing required conditions key for %s (%s). You can only search this model by id', $model->name, $model->useTable
 			));
 		}
-
-		if (!array_key_exists('query', $conditions) && !array_key_exists('id', $conditions)) {
+                
+                if (array_key_exists('find', $conditions) && !$this->isFindable($model->useTable)) {
 			throw new CakeException(__d(
-				'tmdb_api', 'Missing required conditions key for %s (%s). Please use one of the following in your conditions: %s', $model->name, $model->useTable, implode(', ', array('id', 'query'))
+				'tmdb_api', '%s (%s) does not have any findable conditions.', $model->name, $model->useTable
+			));
+		}
+
+                if (array_key_exists('find', $conditions) && $this->isFindable($model->useTable) && !in_array($conditions['find'], $this->_structure[$model->useTable]['finds'])) {
+			throw new CakeException(__d(
+				'tmdb_api', '%s (%s) does not have any findable method called %s.', $model->name, $model->useTable, $conditions['find']
+			));
+		}
+
+		if (!array_key_exists('query', $conditions) && !array_key_exists('id', $conditions) && !array_key_exists('find', $conditions)) {
+			throw new CakeException(__d(
+				'tmdb_api', 'Missing required conditions key for %s (%s). Please use one of the following in your conditions: %s', $model->name, $model->useTable, implode(', ', array('id', 'query', 'find'))
 			));
 		}
 	}
 
 	public function query($url, $params = array(), $method = 'get') {
+                if (method_exists($this, $url)) {
+                    return call_user_func_array(array($this, $url), $params);
+                }
+        
 		$responseObject = $this->_http->$method($url, $params, $this->_httpRequest);
 		$responseBodyJson = $responseObject->body;
 		$responseBodyArray = json_decode($responseBodyJson, true);
@@ -512,5 +572,9 @@ class TmdbSource extends DataSource {
 		}
 		return $responseBodyArray;
 	}
+        
+        public function popular(){
+            return $this->_request('movies/popular');
+        }
 
 }
