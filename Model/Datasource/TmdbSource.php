@@ -415,6 +415,7 @@ class TmdbSource extends DataSource {
 				'tmdb_api', 'Unkown search algorithm for %s (%s). Please use one of the following in your conditions: %s', $model->name, $model->useTable
 			));
 		}
+    $_results = array();
 		foreach ($results as $result) {
 			$_results[] = array($model->alias => $result);
 		}
@@ -519,6 +520,7 @@ class TmdbSource extends DataSource {
 	protected function _request($path, $params = array(), $method = 'GET') {
 		$method = strtolower($method);
 		$params['api_key'] = $this->config['apiKey'];
+		$params['language'] = $this->config['lang'];
 		$url = $this->_baseUrl . trim($path, '/');
 		$this->_log($method, $url, $params);
 		$response = $this->query($url, $params, $method);
